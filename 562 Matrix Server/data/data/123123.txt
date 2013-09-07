@@ -1,0 +1,68 @@
+	public int Kills = 0;
+	public int Deaths = 0;
+Find
+Code:
+killer.setAttackedByDelay(4);
+or
+Code:
+Player killer = (Player) source;
+and under it add 
+Code:
+					killer.Kills += 1;
+						Deaths +=1;
+Commands.java
+
+Code:
+			if (cmd[0].equalsIgnoreCase("kills")) {
+				player.sm("You currently have: <col=FF0000> "+player.Kills+" kills and " +player.Deaths+ " deaths.");
+			}
+
+Little something extra if you want a reward system for certain kills. 
+
+Code:
+			if (cmd[0].equalsIgnoreCase("claim")) {
+                     if (player.Kills >= 5) { // if you have 5 kills 
+                              player.sm("Congratulations You Have Redeemed Your Kill Reward.");
+                              player.getInventory().addItem(995, 10000000); // 10m 
+                              player.Kills -=5;
+                                return true;
+                     } else {
+                    	 player.sm("You do not have enought kills to claim your reward.");
+                        }
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Code:
+	public Player getMostDamageReceivedSourcePlayer() {
+		Player player = null;
+		int damage = -1;
+		for (Entity source : receivedDamage.keySet()) {
+			if (!(source instanceof Player))
+				continue;
+			Integer d = receivedDamage.get(source);
+			if (d == null) {
+				receivedDamage.remove(source);
+				continue;
+			}
+			if (d > damage) {
+				player = (Player) source;
+				damage = d;
+			}
+		}
+		return player;
+	}

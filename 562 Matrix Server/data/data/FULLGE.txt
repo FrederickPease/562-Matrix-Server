@@ -1,0 +1,1428 @@
+[QUOTE=Kµsh;3922505]Contains mostly everything. You'll need to edit the class to fit your game engine/game.
+
+[B]I put a lot of work into this, if you plan on using it, at least give credits :)[/B]
+
+GrandExchange.java
+[CODE]package org.elixrr.game.grandexchange;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import org.elixrr.cache.loaders.ItemDefinitions;
+import org.elixrr.engine.executor.Execution;
+import org.elixrr.engine.executor.ExecutorFactory;
+import org.elixrr.game.eco.Economy;
+import org.elixrr.game.item.Item;
+import org.elixrr.game.player.Player;
+import org.elixrr.utils.Utils;
+
+/**
+ * 
+ * @author Taylor Moon
+ * 
+ * @version Elixrr 2 | update 3
+ */
+public class GrandExchange implements Serializable {
+
+	/**
+	 * The serial ID
+	 */
+	private static final long serialVersionUID = 6661090314047292812L;
+
+	/** The player instance */
+	private Player player;
+
+	/**
+	 * Opens the grand exchange interface
+	 */
+	public void open() {
+		player.getPackets().sendConfig(1112, -1);
+		player.getPackets().sendConfig(1113, -1);
+		player.getPackets().sendConfig(1109, -1);
+		player.getPackets().sendConfig(1110, 0);
+		player.getInterfaceManager().closeInventoryInterface();
+		player.getInterfaceManager().sendInterface(105);
+	}
+
+	/**
+	 * Handles interface buttons
+	 * 
+	 * @param componentId
+	 *            The component ID
+	 */
+	public void handleButtons(int interfaceId, int slotId, int componentId,
+			int packetId) {
+		player.lock(2);
+		switch (interfaceId) {
+		case 105:
+			switch (componentId) {
+			case 19:
+			case 35:
+			case 51:
+			case 70:
+			case 89:
+			case 108:
+				int myBox = getBoxForComponent(componentId);
+				if (myBox > -1) {
+					player.addGEAttribute("box", myBox);
+					if (packetId == 67) {
+						abort(myBox,
+								player.getGEAttribute("buying").equals(
+										Boolean.FALSE));
+						return;
+					}
+					openCollectionInterface(myBox,
+							(player.getGEAttribute("buying")
+									.equals(Boolean.FALSE)));
+				}
+				break;
+			case 31:
+			case 47:
+			case 63:
+			case 82:
+			case 101:
+			case 120:
+				int buyBox = getBoxForComponent(componentId);
+				if (buyBox > -1) {
+					displayBuyInterface(buyBox);
+					player.getPackets().sendConfig(1112, buyBox);
+					player.addGEAttribute("box", buyBox);
+				}
+				break;
+			case 32:
+			case 48:
+			case 64:
+			case 83:
+			case 102:
+			case 121:
+				int sellBox = getBoxForComponent(componentId);
+				if (sellBox > -1) {
+					displaySellInterface(sellBox);
+					player.addGEAttribute("box", sellBox);
+					player.getPackets().sendConfig(1112, sellBox);
+				}
+				break;
+			case 155:
+			case 157:
+			case 160:
+			case 162:
+			case 164:
+			case 166:
+				setAmount(componentId);
+				break;
+			case 186:
+				boolean buying = (boolean) player.getGEAttribute("buying");
+				if (!buying) {
+					player.removeGEAttribute("awaitingSellConfirm");
+				}
+				acceptOffer(buying);
+				break;
+			case 190:
+				int box = (Integer) player.getGEAttribute("box");
+				if (box > -1) {
+					displayBuyInterface(box);
+				}
+				break;
+			case 128:
+				boolean buying1 = (boolean) player.getGEAttribute("buying");
+				try {
+					if (!buying1
+							&& player.getGEAttribute("awaitingSellConfirm") != null) {
+						player.getInventory().addItem(
+								(Item) player
+										.getGEAttribute("awaitingSellConfirm"));
+						player.removeGEAttribute("awaitingSellConfirm");
+					}
+					open();
+				} catch (NullPointerException e) {
+
+				}
+				break;
+			case 200:
+				abort((Integer) player.getGEAttribute("box"), player
+						.getGEAttribute("buying").equals(Boolean.FALSE));
+				break;
+			}
+			break;
+		case 107:
+			if ((Boolean) player.getGEAttribute("buying").equals(Boolean.TRUE))
+				return;
+			sellItem(player.getInventory().getItem(slotId).getId(), player
+					.getInventory().getItem(slotId).getAmount());
+			break;
+		}
+	}
+
+	/**
+	 * Accepts a GE offer
+	 * 
+	 * @param buying
+	 *            If the offer is a buying offer
+	 */
+	public void acceptOffer(final boolean buying) {
+		player.getInterfaceManager().closeChatBoxInterface();
+		final int box = (Integer) player.getGEAttribute("box");
+		final int itemId = (Integer) player.getGEAttribute("item");
+		final int amount = (Integer) player.getGEAttribute("amount");
+		final int price = (Integer) player.getGEAttribute("price");
+		try {
+			if (player.getGEAttribute("notEnough") != null) {
+				player.out("You do not have enough of this item to sell "
+						+ Utils.formatTypicalInteger((int) player
+								.getGEAttribute("notEnough")) + " of it.");
+				return;
+			}
+		} catch (NullPointerException e) {
+
+		}
+		if (buying) {
+			if (player.getMoneyInPouch() < price * amount
+					&& player.getInventory().getNumerOf(995) < price * amount) {
+				player.out("You do not have enough gold peice"
+						+ (price == 1 ? "" : "s") + " to purchase "
+						+ (amount > 1 ? "these items." : "this item."));
+				return;
+			}
+			if (player.getMoneyInPouch() >= price * amount) {
+				player.getMoneyPouch().buyWith(price * amount);
+			} else {
+				player.getInventory().deleteItem(995, price * amount);
+			}
+			player.getPackets().setGe(player, box, 1, itemId, price, amount, 0);
+			ExecutorFactory.schedule(new Execution() {
+
+				@Override
+				public void run() {
+					int tr = Utils.random(amount);
+					player.getPackets().setGe(player, box,
+							tr >= amount ? 5 : 3, itemId, price, amount,
+							tr >= amount ? amount : tr);
+					player.offer[box] = new Offer(player, box, price, itemId,
+							amount, GrandExchangeOfferType.SELLING_PROGRESS
+									.getOpcode(), GrandExchangeType.BUYING,
+							Calendar.getInstance().getTime());
+					player.offer[box].setAmountTransacted(tr);
+					player.offer[box].accept();
+				}
+			}, 4);
+		} else {
+			if (player.getGEAttribute("note") != null) {
+				player.getInventory().deleteItem(
+						((int) player.getGEAttribute("note")), amount);
+			} else {
+				player.getInventory().deleteItem(itemId, amount);
+			}
+			player.getPackets().setGe(player, box, 9, itemId, price, amount, 0);
+			ExecutorFactory.schedule(new Execution() {
+
+				@Override
+				public void run() {
+					int t = Utils.random(amount);
+					player.getPackets().setGe(player, box,
+							t >= amount ? 13 : 12, itemId, price, amount, t);
+					player.offer[box] = new Offer(player, box, price, itemId,
+							amount, GrandExchangeOfferType.SUBMITTING_BUY_OFFER
+									.getOpcode(), GrandExchangeType.SELLING,
+							Calendar.getInstance().getTime());
+					player.offer[box].setAmountTransacted(t);
+					player.offer[box].accept();
+				}
+			}, 4);
+		}
+		open();
+	}
+
+	/**
+	 * Sends the collection interface
+	 * 
+	 * @param slot
+	 *            The GE slot
+	 */
+	public void openCollectionInterface(final int slot, final boolean selling) {
+		player.getPackets().sendConfig(1112, slot);
+		player.getPackets().sendItemOnIComponent(105, 143,
+				player.offer[slot].getId(), 1);
+		player.getInterfaceManager().closeChatBoxInterface();
+		ExecutorFactory.submit(new Execution() {
+
+			@Override
+			public void run() {
+				int priceOffset = (Utils.random(Economy
+						.getItemPrice(player.offer[slot].getId()) / 3) * player.offer[slot]
+						.getAmount());
+				if (player.offer[slot].getAmountTransacted() != 0)
+					player.getPackets().sendItemOnIComponent(
+							105,
+							206,
+							selling ? 995 : player.offer[slot].getId(),
+							selling ? Economy.getItemPrice(player.offer[slot]
+									.getId()) : player.offer[slot]
+									.getAmountTransacted());
+				if (!selling)
+					player.getPackets().sendItemOnIComponent(105, 208, 995,
+							priceOffset);
+			}
+		});
+	}
+
+	/**
+	 * Causes an item to abort
+	 * 
+	 * @param slot
+	 *            The slot to abort
+	 */
+	public void abort(final int slot, final boolean selling) {
+		player.getInterfaceManager().closeChatBoxInterface();
+		if (player.offer[slot].getAmountTransacted() >= player.offer[slot]
+				.getAmount())
+			return;
+		player.getPackets().setGe(player, slot, -3, player.offer[slot].getId(),
+				player.offer[slot].getPrice(), player.offer[slot].getAmount(),
+				player.offer[slot].getAmountTransacted());
+		ExecutorFactory.submit(new Execution() {
+
+			@Override
+			public void run() {
+				player.getPackets().sendItemOnIComponent(
+						105,
+						206,
+						selling ? 995 : player.offer[slot].getId(),
+						!selling ? player.offer[slot].getAmount()
+								- player.offer[slot].getAmountTransacted()
+								: Economy.getItemPrice(player.offer[slot]
+										.getId()));
+				if (!selling)
+					player.getPackets()
+							.sendItemOnIComponent(
+									105,
+									208,
+									995,
+
+									Economy.getItemPrice(player.offer[slot]
+											.getId())
+											* (player.offer[slot].getAmount() - player.offer[slot]
+													.getAmountTransacted()));
+				player.offer[slot].needsMoneyCollected();
+				player.offer[slot].abort();
+			}
+
+		});
+		player.out("Abort request acknowledged. Please be aware that your offer may have already been completed.");
+	}
+
+	/**
+	 * Processes the GE for this player
+	 */
+	public void process() {
+		try {
+			for (int i = 0; i < player.offer.length; i++) {
+				if (player.offer[i] == null
+						|| player.offer[i].isAborted()
+						|| !player.offer[i].wasAccepted()
+						|| !player.offer[i].waitingCollection()
+						|| player.offer[i].getAmountTransacted() == player.offer[i]
+								.getAmount())
+					continue;
+				final int id = player.offer[i].getId();
+				final int amount = player.offer[i].getAmount();
+				final int price = player.offer[i].getPrice();
+				final int transacted = player.offer[i].getAmountTransacted();
+				final int box = i;
+				final boolean selling = player.getGEAttribute("buying").equals(
+						Boolean.FALSE);
+				if (player.offer[i].getAmountTransacted() >= player.offer[i]
+						.getAmount() || amount == 1) {
+					ExecutorFactory.submit(new Execution() {
+
+						@Override
+						public void run() {
+							player.getPackets().setGe(player, box, 5, id,
+									price, amount, amount);
+							player.offer[box].needsCollected();
+							return;
+						}
+					});
+				}
+				if (Utils.random(23) == 6) {
+					final int t = Utils.random(amount);
+					if (t < amount || transacted != amount) {
+						ExecutorFactory.submit(new Execution() {
+
+							@Override
+							public void run() {
+								player.getPackets().setGe(player, box, 3, id,
+										price, amount, transacted + t);
+								player.offer[box]
+										.setAmountTransacted(player.offer[box]
+												.getAmountTransacted() + t);
+								ExecutorFactory.submit(new Execution() {
+									@Override
+									public void run() {
+										player.getPackets()
+												.sendItemOnIComponent(
+														105,
+														206,
+														selling ? 995
+																: player.offer[box]
+																		.getId(),
+														selling ? Economy
+																.getItemPrice(player.offer[box]
+																		.getId())
+																: player.offer[box]
+																		.getAmountTransacted());
+									}
+								});
+							}
+						});
+					} else if (t >= amount
+							|| player.offer[i].getAmountTransacted() >= amount) {
+						ExecutorFactory.submit(new Execution() {
+
+							@Override
+							public void run() {
+								player.getPackets().setGe(player, box, 5, id,
+										price, amount, amount);
+								player.offer[box].needsCollected();
+							}
+						});
+					}
+				}
+			}
+		} catch (Exception e) {
+			/* Empty */
+		}
+	}
+
+	/**
+	 * Creates an offer record
+	 * 
+	 * @param offer
+	 *            The offer to record
+	 */
+	public void createRecord(Offer offer) {
+		final ArrayList<String> lines = new ArrayList<>();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(
+					"Grand Exchange/" + player.getDisplayName()));
+			String line1 = reader.readLine();
+			if (line1 != null) {
+				lines.add(line1);
+				String line = "";
+				while ((line = reader.readLine()) != null)
+					lines.add(line);
+			}
+			reader.close();
+			BufferedWriter writer = new BufferedWriter(new FileWriter(
+					"Grand Exchage/" + player.getDisplayName()));
+			for (String s : lines)
+				writer.write(s);
+			writer.write(offer.toString());
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Returns the offer
+	 * 
+	 * @param file
+	 *            The file
+	 * @param date
+	 *            The date
+	 * @return The corresponding offer
+	 */
+	@SuppressWarnings("unused")
+	public Offer getOffer(File file, Date date) {// FIXME date search
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(file));
+			String[] line = reader.readLine().replace("x", " ").split(" ");
+			int amount = Integer.parseInt(line[1]);
+			Item item = Item.getItem(line[2]);
+			// TODO finish this lolol.
+			reader.close();
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
+	 * Sets an offer
+	 * 
+	 * @param box
+	 *            The box
+	 * @param offer
+	 *            The offer to set
+	 */
+	public void setOffer(int box, Offer offer) {
+		this.player.offer[box] = offer;
+	}
+
+	/**
+	 * Sells a GE item
+	 * 
+	 * @param id
+	 *            The item id
+	 * @param amount
+	 *            The item amount
+	 */
+	public void sellItem(int id, int amount) {
+		player.getInterfaceManager().closeChatBoxInterface();
+		if (!canExchange(new Item(id))) {
+			player.getDialogueManager().startDialogue("SimpleMessage",
+					"That item is not tradeable.");
+			return;
+		}
+		ItemDefinitions def = ItemDefinitions.getItemDefinitions(id);
+		if (def == null)
+			throw new NullPointerException("Nulled item definitions: " + id);
+		if (def.isNoted()) {
+			player.addGEAttribute("note", def.getId());
+			id = def.getId() - 1;
+			player.getInterfaceManager().closeInventoryInterface();
+			sendPrice(id);
+			setItem(def.getId() - 1, Economy.getItemPrice(id), player
+					.getInventory().getItems().getNumberOf(def.getId()));
+			player.addGEAttribute("itemAmount", player.getInventory()
+					.getItems().getNumberOf(def.getId()));
+			player.getInventory().deleteItem(id, amount);
+			player.addGEAttribute("awaitingSellConfirm", new Item(id, amount));
+		} else {
+			amount = player.getInventory().getItems().getNumberOf(id);
+			player.getInterfaceManager().closeInventoryInterface();
+			sendPrice(id);
+			setItem(id, Economy.getItemPrice(id), player.getInventory()
+					.getItems().getNumberOf(def.getId()));
+			player.getInventory().deleteItem(id, amount);
+			player.addGEAttribute("itemAmount", amount);
+			/*
+			 * Prevents losing the item after walking away or closing the
+			 * interface somehow
+			 */
+			player.addGEAttribute("awaitingSellConfirm", new Item(id, amount));
+		}
+	}
+
+	/**
+	 * Buys an item
+	 * 
+	 * @param id
+	 *            The item id
+	 */
+	public void buyItem(int id) {
+		String name = ItemDefinitions.getItemDefinitions(id).getName()
+				.toLowerCase();
+		if (!canExchange(new Item(id)) || name.contains("partyhat")
+				|| name.contains("disk of") || name.equalsIgnoreCase("pumpkin")
+				|| name.contains("santa hat") || name.contains("easter egg")
+				|| name.contains("h'ween")
+				|| name.contains("christmas cracker")) {
+			player.getDialogueManager().startDialogue("SimpleMessage",
+					"That item is not tradeable.");
+			return;
+		}
+		ItemDefinitions def = ItemDefinitions.getItemDefinitions(id);
+		if (def == null) {
+			return;
+		}
+		player.getInterfaceManager().closeInventoryInterface();
+		sendPrice(id);
+		setItem(id, Economy.getItemPrice(id), 1);
+		final int box = (Integer) player.getGEAttribute("box");
+		final int price = (Integer) player.getGEAttribute("price");
+		player.offer[box] = new Offer(player, box, price, id, 1,
+				GrandExchangeOfferType.SELLING_PROGRESS.getOpcode(),
+				GrandExchangeType.BUYING, Calendar.getInstance().getTime());
+	}
+
+	/**
+	 * Sends the items
+	 * 
+	 * @param items
+	 *            The items to send
+	 * @param box
+	 *            The box
+	 */
+	public void sendItems(Item[] items, int box) {
+		int key = getComponentForBox(box);
+		player.getPackets().sendItems(key, items);
+	}
+
+	/**
+	 * If a player can exchange a certain item
+	 * 
+	 * @param item
+	 *            The item to exchange
+	 * @return If the item is exchangable
+	 */
+	public boolean canExchange(Item item) {
+		if (item.getDefinitions().containsOption("Check-charges")
+				|| item.getDefinitions().containsOption("Check-state"))
+			return false;
+		if (item.getDefinitions().containsOption("Bind")
+				|| item.getDefinitions().containsOption("Destroy")
+				|| item.getDefinitions().containsOption("Change-colour")
+				|| item.getDefinitions().containsOption("Customize"))
+			return false;
+		switch (item.getId()) {
+		case 995:
+			return false;
+		default:
+			return true;
+		}
+	}
+
+	/**
+	 * Returns the offer of a corresponding box
+	 * 
+	 * @param box
+	 *            The box
+	 * @return The offer
+	 */
+	public Offer getOffer(int box) {
+		try {
+			return player.offer[box];
+		} catch (NullPointerException e) {
+
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the offers
+	 * 
+	 * @return The offers
+	 */
+	public Offer[] getOffers() {
+		return player.offer;
+	}
+
+	/**
+	 * Displays the default buy interface
+	 * 
+	 * @param box
+	 *            The offer box
+	 */
+	public void displayBuyInterface(int box) {
+		player.addGEAttribute("buying", Boolean.TRUE);
+		Object[] o = new Object[] { "Grand Exchange Item Search" };
+		player.getPackets().sendConfig(1113, 0);
+		player.getPackets().setGeSearch(o);
+	}
+
+	/**
+	 * Displays the default sell interface
+	 * 
+	 * @param player
+	 *            The player
+	 * @param offerBox
+	 *            The offer box
+	 */
+	public void displaySellInterface(int offerBox) {
+		reset();
+		player.addGEAttribute("buying", Boolean.FALSE);
+		player.getPackets().sendConfig(1113, 1);
+		player.getInterfaceManager().sendInventoryInterface(107);
+		player.getPackets().sendItems(93, player.getInventory().getItems());
+		player.getPackets().sendUnlockIComponentOptionSlots(107, 0, 0, 27, 0);
+		player.getPackets().sendInterSetItemsOptionsScript(107, 0, 93, 4, 7,
+				"Offer");
+		player.getInterfaceManager().closeChatBoxInterface();
+		player.getPackets().sendHideIComponent(105, 196, true);
+	}
+
+	/**
+	 * Sets the item constants
+	 * 
+	 * @param id
+	 *            The ID
+	 * @param price
+	 *            The price
+	 * @param amount
+	 *            The amount
+	 */
+	public void setItem(int id, int price, int amount) {
+		player.getPackets().sendConfig(1109, id);
+		player.getPackets().sendConfig(1110, amount);
+		player.getPackets().sendConfig(1111, price);
+		player.addGEAttribute("item", id);
+		player.addGEAttribute("price", price);
+		player.addGEAttribute("amount", amount);
+	}
+
+	/**
+	 * Sends the price settings for an item
+	 * 
+	 * @param id
+	 *            The item id
+	 */
+	public void sendPrice(int id) {
+		player.getPackets().sendConfig(1111, Economy.getItemPrice(id));
+		player.getPackets().sendConfig(1115, Economy.getItemPrice(id));
+		player.getPackets().sendConfig(1114, Economy.getItemPrice(id));
+		player.getPackets().sendConfig(1116, Economy.getItemPrice(id));
+	}
+
+	/**
+	 * Resets the GE boxes
+	 */
+	public void reset() {
+		player.getPackets().sendConfig(1109, -1);
+		player.getPackets().sendConfig(1110, 0);
+		player.getPackets().sendConfig(1111, 0);
+		player.getPackets().sendConfig(1112, -1);
+		player.getPackets().sendConfig(1113, 0);
+		player.removeGEAttribute("box");
+		player.removeGEAttribute("item");
+		player.removeGEAttribute("price");
+		player.removeGEAttribute("amount");
+	}
+
+	/**
+	 * Sets the item amount
+	 * 
+	 * @param button
+	 *            The button that's being clicked
+	 */
+	public void setAmount(int button) {
+		int amount = (Integer) player.getGEAttribute("amount");
+		int itemId = (Integer) player.getGEAttribute("item");
+		ItemDefinitions defs = ItemDefinitions.getItemDefinitions(itemId);
+		boolean buying = (Boolean) player.getGEAttribute("buying");
+		switch (button) {
+		case 155:
+			if (amount > 1) {
+				amount--;
+			} else {
+				amount = 1;
+			}
+			break;
+		case 157:
+			if (amount < Integer.MAX_VALUE) {
+				amount++;
+			} else {
+				amount = 1;
+			}
+			break;
+		case 160:
+			if (buying) {
+				if (player.getInventory().getNumerOf(itemId) <= amount
+						&& !buying) {
+					return;
+				}
+				amount += 1;
+			} else {
+				amount = 1;
+			}
+			break;
+		case 162:
+			if (buying) {
+				amount += 10;
+			} else {
+				if (player.getInventory().getNumerOf(itemId) > 10) {
+					amount = (int) player.getGEAttribute("amount");
+				} else {
+					amount = 10;
+				}
+			}
+			break;
+		case 164:
+			if (buying) {
+				amount += 100;
+			} else {
+				if (defs.isNoted()) {
+					if (player.getInventory().getItems()
+							.getNumberOf(defs.getCertId()) <= 100) {
+						amount = (int) player.getGEAttribute("amount");
+					} else {
+						amount = 100;
+					}
+				} else if (player.getInventory().getItems().getNumberOf(itemId) <= 100) {
+					amount = (int) player.getGEAttribute("amount");
+				} else {
+					amount = 100;
+				}
+			}
+			break;
+		case 166:
+			if (buying) {
+				amount += 1000;
+			} else {
+				amount = (int) player.getGEAttribute("amount");
+			}
+			break;
+		}
+		player.addGEAttribute("amount", amount);
+		player.getPackets().sendConfig(1110, amount);
+	}
+
+	/**
+	 * Returns the button corresponding to a box
+	 * 
+	 * @param box
+	 *            The box
+	 * @return The corresponding button ID
+	 */
+	public int getComponentForBox(int box) {
+		switch (box) {
+		case 0:
+			return 523;
+		case 1:
+			return 524;
+		case 2:
+			return 525;
+		case 3:
+			return 526;
+		case 4:
+			return 527;
+		case 5:
+			return 528;
+		}
+		return -1;
+	}
+
+	/**
+	 * Returns the box corresponding to the button
+	 * 
+	 * @param button
+	 *            The button being clicked
+	 * @return The box
+	 */
+	public int getBoxForComponent(int button) {
+		switch (button) {
+		case 19:
+		case 31:
+		case 32:
+			return 0;
+		case 35:
+		case 48:
+		case 47:
+			return 1;
+		case 51:
+		case 63:
+		case 64:
+			return 2;
+		case 70:
+		case 82:
+		case 83:
+			return 3;
+		case 89:
+		case 101:
+		case 102:
+			return 4;
+		case 108:
+		case 120:
+		case 121:
+			return 5;
+		}
+		return -1;
+	}
+
+	/**
+	 * Sets the player
+	 * 
+	 * @param player
+	 *            The player to set
+	 */
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+}
+[/CODE]
+
+GrandExchangeOfferType.java
+[CODE]package org.elixrr.game.grandexchange;
+
+/**
+ * @author Taylor Moon
+ * 
+ * @version Elixrr 2 | update 3
+ */
+public enum GrandExchangeOfferType {
+
+	/**
+	 * If the offer was aborted
+	 */
+	ABORTED(-3),
+
+	/**
+	 * If the GE expected a reset
+	 */
+	RESET_GE(0),
+
+	/**
+	 * Resets after buy
+	 */
+	RESET_AFTER_BUY(8),
+
+	/**
+	 * Resets after sell
+	 */
+	RESET_AFTER_SELL(16),
+
+	/**
+	 * Submitting a buy offer
+	 */
+	SUBMITTING_BUY_OFFER(1),
+
+	/**
+	 * Buying progress 1
+	 */
+	BUYING_PROGRESS(2),
+
+	/**
+	 * Buying progress 2
+	 */
+	BUYING_PROGRESS_2(3),
+
+	/**
+	 * Buying progress 3
+	 */
+	BUYING_PROGRESS_3(4),
+
+	/**
+	 * Finished buying an item
+	 */
+	FINISHED_BUYING(5),
+
+	/**
+	 * Buying progress 5
+	 */
+	BUYING_PROGRESS_5(6),
+
+	/**
+	 * Buying progress 7
+	 */
+	BUYING_PROGRESS_6(7),
+
+	/**
+	 * Submitting a selling offer
+	 */
+	SUBMIT_SELL_OFFER(9),
+
+	/**
+	 * Selling progress 1
+	 */
+	SELLING_PROGRESS(10),
+
+	/**
+	 * Selling progress 2
+	 */
+	SELLING_PROGRESS_2(11),
+
+	/**
+	 * Selling progress 3
+	 */
+	SELLING_PROGRESS_3(13),
+
+	/**
+	 * Selling progress 4
+	 */
+	SELLING_PROGRESS_4(14),
+
+	/**
+	 * Selling progress 5
+	 */
+	SELLING_PROGRESS_5(15),
+
+	/**
+	 * Finished selling an item
+	 */
+	FINISHED_SELLING(13);
+
+	/**
+	 * The opcode
+	 */
+	private int opcode;
+
+	/**
+	 * Constructs the GE offer type
+	 * 
+	 * @param opcode
+	 *            The opcode
+	 */
+	GrandExchangeOfferType(int opcode) {
+		this.opcode = opcode;
+	}
+
+	/**
+	 * Returns the opcode
+	 * 
+	 * @return The opcode;
+	 */
+	public int getOpcode() {
+		return opcode;
+	}
+}
+[/CODE]
+
+GrandExchangeType.java
+[CODE]package org.elixrr.game.grandexchange;
+
+/**
+ * @author Taylor Moon
+ * 
+ * @version Elixrr 2 | update 3
+ */
+public enum GrandExchangeType {
+
+	/**
+	 * If the type is buying
+	 */
+	BUYING,
+
+	/**
+	 * If the type is selling
+	 */
+	SELLING,
+
+	/**
+	 * If the type is aborted
+	 */
+	ABORTED,
+
+	/**
+	 * If the item is done buying/selling
+	 */
+	AWAITING_REMOVAL;
+
+}
+[/CODE]
+
+Offer.java
+[CODE]package org.elixrr.game.grandexchange;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import org.elixrr.cache.loaders.ItemDefinitions;
+import org.elixrr.game.player.Player;
+
+/**
+ * 
+ * @author Taylor Moon
+ * 
+ * @version Elixrr 2 | update 3
+ */
+public final class Offer implements Serializable {
+
+	/**
+	 * The serial ID
+	 */
+	private static final long serialVersionUID = 8872511602665689138L;
+
+	/**
+	 * The owner of this offer
+	 */
+	private Player owner;
+
+	/**
+	 * The price
+	 */
+	private int price;
+
+	/**
+	 * The item ID
+	 */
+	private int id;
+
+	/**
+	 * The item amount
+	 */
+	private int amount;
+
+	/**
+	 * The creation date
+	 */
+	private Date date;
+
+	/**
+	 * The progress
+	 */
+	private int progress;
+
+	/**
+	 * If the player has yet to collected price offset
+	 */
+	private boolean needsMoneyCollected;
+
+	/**
+	 * The item box
+	 */
+	private int box;
+
+	/**
+	 * The amount sold/bought
+	 */
+	private int amountTransacted;
+
+	/**
+	 * The player instance
+	 */
+	private transient Player player;
+
+	/**
+	 * The type of exchange
+	 */
+	private GrandExchangeType type;
+
+	/**
+	 * If the offer is aborted
+	 */
+	private boolean aborted;
+
+	/**
+	 * If the offer was accepted or not
+	 */
+	private boolean accepted;
+
+	/**
+	 * If this offer needs to be collected
+	 */
+	private boolean needsCollected = false;
+
+	/**
+	 * Constructs the offer
+	 * 
+	 * @param Owner
+	 *            The owner of this offer
+	 * @param box
+	 *            The box corresponding to the offer
+	 * @param price
+	 *            The price
+	 * @param id
+	 *            The item id
+	 * @param amount
+	 *            The amount
+	 * @param progress
+	 *            The progress
+	 * @param buying
+	 *            If it's buying or selling
+	 */
+	public Offer(Player owner, int box, int price, int id, int amount,
+			int progress, GrandExchangeType type, Date date) {
+		this.owner = owner;
+		this.box = box;
+		this.price = price;
+		this.id = id;
+		this.amount = amount;
+		this.type = type;
+		this.progress = progress;
+	}
+
+	/**
+	 * Returns the owner of this offer
+	 * 
+	 * @return The owner
+	 */
+	public Player getOwner() {
+		return owner;
+	}
+
+	/**
+	 * Returns the price of this offer
+	 * 
+	 * @return The price
+	 */
+	public int getPrice() {
+		return price;
+	}
+
+	/**
+	 * Returns the item ID of this offer
+	 * 
+	 * @return The id
+	 */
+	public int getId() {
+		return id;
+	}
+
+	/**
+	 * Returns the creation date
+	 * 
+	 * @return The creation date
+	 */
+	public Date getDate() {
+		return date;
+	}
+
+	/**
+	 * Returns the item amount of this offer
+	 * 
+	 * @return The amount
+	 */
+	public int getAmount() {
+		return amount;
+	}
+
+	/**
+	 * Returns the box of this offer
+	 * 
+	 * @return The box
+	 */
+	public int getBox() {
+		return box;
+	}
+
+	/**
+	 * Returns the type of exchange
+	 * 
+	 * @return The exchange type
+	 */
+	public GrandExchangeType getExchangeType() {
+		return type;
+	}
+
+	/**
+	 * Returns the owner
+	 * 
+	 * @return The owner
+	 */
+	public Player getPlayer() {
+		if (player == null) {
+			player = owner;
+		}
+		return player;
+	}
+
+	/**
+	 * Sets the ID of the iten
+	 * 
+	 * @param id
+	 *            The id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		ItemDefinitions def = ItemDefinitions.getItemDefinitions(id);
+		return "[" + date + "]:Transacting: " + amount + "x" + def.getName()
+				+ ", Progress ID: " + progress + ", Amount Transacted: "
+				+ amountTransacted + "";
+	}
+
+	/**
+	 * Returns the progress of the item
+	 * 
+	 * @return The progress
+	 */
+	public int getProgress() {
+		return progress;
+	}
+
+	/**
+	 * Increases the progress of the item
+	 * 
+	 * @param amount
+	 *            The amount to increase
+	 */
+	public void increaseProgress(int amount) {
+		progress += amount;
+	}
+
+	/**
+	 * Sets the amount transacted
+	 * 
+	 * @param amount
+	 *            The amount to set
+	 */
+	public void setAmountTransacted(int amount) {
+		amountTransacted = amount;
+	}
+
+	/**
+	 * Checks if this offer is aborted
+	 * 
+	 * @return If it's aborted
+	 */
+	public boolean isAborted() {
+		return aborted;
+	}
+
+	/**
+	 * Causes this offer to abort
+	 */
+	public void abort() {
+		aborted = true;
+	}
+
+	/**
+	 * 
+	 * @return The amount sold/bought
+	 */
+	public int getAmountTransacted() {
+		return amountTransacted;
+	}
+
+	/**
+	 * If this offer was acceped
+	 * 
+	 * @return accepted
+	 */
+	public boolean wasAccepted() {
+		return accepted;
+	}
+
+	/**
+	 * Accepts this offer
+	 */
+	public void accept() {
+		accepted = true;
+	}
+
+	/**
+	 * Sets needs collected to true
+	 */
+	public void needsCollected() {
+		needsCollected = true;
+	}
+
+	/**
+	 * If this offer needs collected
+	 * 
+	 * @return If this offer needs collected
+	 */
+	public boolean waitingCollection() {
+		return needsCollected;
+	}
+
+	/**
+	 * Sets needs money collected to true
+	 */
+	public void needsMoneyCollected() {
+		needsMoneyCollected = true;
+	}
+
+	/**
+	 * If the player collected their money
+	 * 
+	 * @return True if so; false otherwise
+	 */
+	public boolean moneyCollected() {
+		return needsMoneyCollected;
+	}
+}
+[/CODE]
+
+[COLOR="#FF0000"]Add this check to your walk protocol, logout, and login methods:[/COLOR]
+[CODE]if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+					|| player.isDead())
+				return;
+			try {
+				if (player.getGEAttribute("awaitingSellConfirm") != null) {
+					player.getInventory()
+							.addItem(
+									(Item) player
+											.getGEAttribute("awaitingSellConfirm"));
+					player.removeGEAttribute("awaitingSellConfirm");
+				}
+			} catch (Exception e) {
+
+			}[/CODE]
+
+Declare the default offers in the player class
+[CODE]public transient Offer[] offer = new Offer[6];[/CODE]
+
+
+
+[COLOR="#FF0000"]Extra[/COLOR]: Item set
+[CODE]package org.elixrr.game.grandexchange;
+
+import org.elixrr.game.player.Player;
+
+/**
+ * @author Taylor Moon
+ * 
+ * @version Elixrr 2 | update 3
+ */
+public class GrandExchangeItemSet {
+
+	/**
+	 * Adds the set to a player's inventory
+	 * 
+	 * @param player
+	 *            The player
+	 * @param set
+	 *            The set to add
+	 */
+	public GrandExchangeItemSet(Player player, GEItemSet set) {
+		if (player.getInventory().isFull(1)) {
+			player.getBank().addItem(set.getSetID(), 1, true);
+			player.out("Your set has added to your bank.");
+			return;
+		}
+		player.getInventory().addItem(set.getSetID(), 1);
+	}
+
+	/**
+	 * 
+	 * @author Taylor Moon
+	 * 
+	 * @version Elixrr 2 | update 3
+	 */
+	public enum GEItemSet {
+
+		NULL(0, new int[] {});
+
+		/**
+		 * The ID of the item set
+		 */
+		private int id;
+
+		/**
+		 * The ID of the containing item
+		 */
+		private int[] itemId;
+
+		/**
+		 * Constructs the item set
+		 * 
+		 * @param id
+		 *            The ID of the set
+		 * @param itemId
+		 *            the ID of the item
+		 */
+		GEItemSet(int id, int[] itemId) {
+			this.id = id;
+		}
+
+		/**
+		 * Returns the set ID
+		 * 
+		 * @return The ID of this set
+		 */
+		public int getSetID() {
+			return id;
+		}
+
+		/**
+		 * Returns an array of the items inside
+		 * 
+		 * @return The items inside the set
+		 */
+		public int[] getItemsInside() {
+			return itemId;
+		}
+	}
+}
+[/CODE]
+
+[B][COLOR="#FF0000"]Lacks:[/COLOR][/B]
+[LIST]
+[*]A "player influenced" economy. (Pretty much finished but not implemented in the Process method)
+[*]Collection box access masks (For button clicking on the collection box) Get the unlock from Matrix2 client.
+[*]Probably minor bugs to fix ;o
+[/LIST][/QUOTE]
+

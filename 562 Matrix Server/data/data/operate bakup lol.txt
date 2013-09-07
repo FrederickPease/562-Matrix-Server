@@ -1,0 +1,384 @@
+package com.rs.net.decoders.handlers;
+
+
+
+
+
+
+
+
+import com.rs.Settings;
+import com.rs.cache.loaders.ObjectDefinitions;
+import com.rs.game.Animation;
+import com.rs.game.World;
+import com.rs.game.WorldObject;
+import com.rs.game.WorldTile;
+import com.rs.game.item.Item;
+import com.rs.game.player.Equipment;
+//import com.rs.game.npc.familiar.Familiar.SpecialAttack;
+import com.rs.game.player.Inventory;
+import com.rs.game.player.Player;
+import com.rs.game.player.actions.Firemaking;
+import com.rs.game.player.actions.Summoning;
+import com.rs.game.player.actions.Summoning.Pouches;
+
+//import com.rs.game.player.content.Runecrafting;
+import com.rs.game.player.controlers.Barrows;
+import com.rs.game.tasks.WorldTask;
+import com.rs.game.tasks.WorldTasksManager;
+import com.rs.game.player.actions.Cooking;
+import com.rs.game.player.actions.Cooking.Cookables;
+
+import com.rs.io.InputStream;
+import com.rs.utils.Logger;
+import com.rs.utils.Utils;
+
+public class InventoryOptionsHandler {
+	public static void handleItemOnItem(final Player player, InputStream stream) {
+		try {
+		final int interfaceIndex = stream.readShort();
+	//	int fromSlot = stream.readShort();
+		//int toSlot = stream.readShort();
+		@SuppressWarnings("unused") final int junk1 = stream.readShortLE128() & 0xFFFF;
+		@SuppressWarnings("unused") final int junk2 = stream.readShortLE() & 0xFFFF;
+		@SuppressWarnings("unused") final int junk3 = stream.readShortLE128() & 0xFFFF;
+		final int itemUsed = stream.readShortLE128() & 0xFFFF;
+		@SuppressWarnings("unused") final int junk4 = stream.readShortLE128() & 0xFFFF;
+		@SuppressWarnings("unused") final int junk5 = stream.readShortLE128() & 0xFFFF;
+		final int usedWith = stream.readShortLE() & 0xFFFF;
+		if (interfaceIndex != 149) {
+			return;
+		}
+		System.out.println("ITEM 1: " +itemUsed+ " ITEM 2: " +usedWith);
+if (UseWith(1540,11286,usedWith,itemUsed)) {
+if (!player.getInventory().containsOneItem(2347)){
+player.getPackets().sendGameMessage("You need a hammer for make an dragon fire shield.");
+return;
+}
+player.getPackets().sendGameMessage("You made a Dragon Fire Shield and you got some smithing xp.");
+player.getSkills().addXp(13, 10000);
+player.getInventory().deleteItem(usedWith, 1);
+player.getInventory().deleteItem(itemUsed, 1);
+player.getInventory().addItem(11283, 1);
+}
+//if (Firemaking.isFiremaking(player ,usedWith, itemUsed))
+	//return;
+if (UseWith(946,1511,usedWith,itemUsed)) {
+      if (!player.getInventory().containsOneItem(946)) {
+      	player.getPackets().sendGameMessage("You need a knife to fletch.");
+     	 return;
+      }  
+      	player.setNextAnimation(new Animation(6702));   
+      	player.getPackets().sendGameMessage("You make bronze arrows.");   
+      	player.getSkills().addXp(9, 500);
+     	player.getInventory().deleteItem(1511, 1);
+	player.getInventory().addItem(882, 15); 
+}
+if (UseWith(946,1521,usedWith,itemUsed)) {
+       if(player.getSkills().getLevelForXp(9) < 15) {
+	player.getPackets().sendGameMessage("You do not have the level requirement needed to fletch this.");
+      	return;
+      }
+      if (!player.getInventory().containsOneItem(946)) {
+      	player.getPackets().sendGameMessage("You need a knife to fletch.");
+     	 return;
+      }  
+      	player.setNextAnimation(new Animation(6702));   
+      	player.getPackets().sendGameMessage("You make iron arrows.");   
+      	player.getSkills().addXp(9, 1000);
+     	player.getInventory().deleteItem(1521, 1);
+	player.getInventory().addItem(884, 15); 
+}
+if (UseWith(946,1519,usedWith,itemUsed)) {
+       if(player.getSkills().getLevelForXp(9) < 30) {
+	player.getPackets().sendGameMessage("You do not have the level requirement needed to fletch this.");
+      	return;
+      }
+      if (!player.getInventory().containsOneItem(946)) {
+      	player.getPackets().sendGameMessage("You need a knife to fletch.");
+     	 return;
+      }  
+      	player.setNextAnimation(new Animation(6702));   
+      	player.getPackets().sendGameMessage("You make steel arrows.");   
+      	player.getSkills().addXp(9, 1500);
+     	player.getInventory().deleteItem(1519, 1);
+	player.getInventory().addItem(886, 15); 
+}
+if (UseWith(946,1517,usedWith,itemUsed)) {
+       if(player.getSkills().getLevelForXp(9) < 45) {
+	player.getPackets().sendGameMessage("You do not have the level requirement needed to fletch this.");
+      	return;
+      }
+      if (!player.getInventory().containsOneItem(946)) {
+      	player.getPackets().sendGameMessage("You need a knife to fletch.");
+     	 return;
+      }  
+      player.setNextAnimation(new Animation(6702));   
+      	player.getPackets().sendGameMessage("You make mithril arrows.");   
+      	player.getSkills().addXp(9, 2000);
+     	player.getInventory().deleteItem(1517, 1);
+	player.getInventory().addItem(888, 15); 
+}
+if (UseWith(946,1515,usedWith,itemUsed)) {
+       if(player.getSkills().getLevelForXp(9) < 60) {
+	player.getPackets().sendGameMessage("You do not have the level requirement needed to fletch this.");
+      	return;
+      }
+      if (!player.getInventory().containsOneItem(946)) {
+      	player.getPackets().sendGameMessage("You need a knife to fletch.");
+     	 return;
+      }  
+      	player.setNextAnimation(new Animation(6702));   
+      	player.getPackets().sendGameMessage("You make adamant arrows.");   
+      	player.getSkills().addXp(9, 4000);
+     	player.getInventory().deleteItem(1515, 1);
+	player.getInventory().addItem(890, 15); 
+}
+if (UseWith(946,1513,usedWith,itemUsed)) {
+       if(player.getSkills().getLevelForXp(9) < 80) {
+	player.getPackets().sendGameMessage("You do not have the level requirement needed to fletch this.");
+      	return;
+      }
+      if (!player.getInventory().containsOneItem(946)) {
+      	player.getPackets().sendGameMessage("You need a knife to fletch.");
+     	 return;
+      }  
+      	player.setNextAnimation(new Animation(6702));   
+      	player.getPackets().sendGameMessage("You make rune arrows.");   
+      	player.getSkills().addXp(9, 8000);
+     	player.getInventory().deleteItem(1513, 1);
+	player.getInventory().addItem(892, 15); 
+}
+if (UseWith(13736,13746,usedWith,itemUsed)) {
+player.getInventory().deleteItem(13736, 1);
+player.getInventory().deleteItem(13746, 1);
+player.getInventory().addItem(13738, 1); 
+}
+if (UseWith(13736,13748,usedWith,itemUsed)) {
+player.getInventory().deleteItem(13736, 1);
+player.getInventory().deleteItem(13748, 1);
+player.getInventory().addItem(13740, 1); 
+}
+if (UseWith(13736,13750,usedWith,itemUsed)) {
+player.getInventory().deleteItem(13736, 1);
+player.getInventory().deleteItem(13750, 1);
+player.getInventory().addItem(13742, 1); 
+}
+if (UseWith(13736,13752,usedWith,itemUsed)) {
+player.getInventory().deleteItem(13736, 1);
+player.getInventory().deleteItem(13752, 1);
+player.getInventory().addItem(13744, 1); 
+}
+		} catch(Exception e) {
+		}
+	}
+	@SuppressWarnings("unused")
+	public static void handleItemObject(final Player player, InputStream stream) {
+		final int y = stream.readShortLE() & 0xFFFF;
+		final int objectId = stream.readShortLE() & 0xFFFF;
+		final int unknown = stream.readShort128() & 0xFFFF;// Value : 128 ? 200;
+		final int interfaceId = stream.readShort() & 0xFFFF;
+		final int itemId = stream.readShort128() & 0xFFFF;
+		final int itemSlot = stream.readShort128() & 0xFFFF;
+		final int x = stream.readShortLE() & 0xFFFF;
+		final int slot = player.getInventory().lookupSlot(itemId);
+		if (interfaceId != 149) {// Player is not in invy screen
+			return;
+		}
+		if (!player.getInventory().containsOneItem(itemId)) {
+			return;
+		}
+		final Item item = player.getInventory().getItem(itemSlot);
+		if (!player.hasStarted() || !player.clientHasLoadedMapRegion()
+				|| player.isDead())
+			return;
+		long currentTime = Utils.currentTimeMillis();
+		if (player.getLockDelay() >= currentTime || player.getEmotesManager().getNextEmoteEnd() >= currentTime)
+			return;
+		final WorldTile tile = new WorldTile(x, y, player.getPlane());
+		int regionId = tile.getRegionId();
+		if (!player.getMapRegionsIds().contains(regionId))
+			return;
+		WorldObject mapObject = World.getRegion(regionId).getObject(objectId, tile);
+		if (mapObject == null || mapObject.getId() != objectId)
+			return;
+		final WorldObject object = !player.isAtDynamicRegion() ? mapObject : new WorldObject(objectId, mapObject.getType(), mapObject.getRotation(), x, y, player.getPlane());
+		//final int item = player.getInventory().lookupSlot(itemId);
+		if (player.isDead() || Utils.getInterfaceDefinitionsSize() <= interfaceId)
+			return;
+		if (player.getLockDelay() > Utils.currentTimeMillis())
+			return;
+		if (!player.getInterfaceManager().containsInterface(interfaceId))
+			return;
+		/*if (item == null || item.getId() != itemId)
+			return;*/
+		player.stopAll(false); // false
+		final ObjectDefinitions objectDef = object.getDefinitions();
+		//ObjectHandler.handleItemOnObject(player, object, interfaceId, item);
+		if (UseWith(954, 3828, itemId, objectId)) { // warriror
+			if (player.isKalphiteLairSetted())
+				return;
+			player.getInventory().deleteItem(954, 1);
+			player.setKalphiteLair();
+			}
+		else if (UseWith(954, 3827, itemId, objectId)) {
+			if (player.isKalphiteLairEntranceSetted())
+				return;
+			player.getInventory().deleteItem(954, 1);
+			player.setKalphiteLairEntrance();
+	} else if (objectDef.name.toLowerCase().contains("range")
+			|| objectDef.name.toLowerCase().contains("stove")
+        	|| objectDef.name.toLowerCase().contains("cooking range")
+			|| objectId == 2728) {
+		Cookables cook = Cooking.isCookingSkill(item);
+		if (cook != null) {
+			player.getDialogueManager().startDialogue(
+					"CookingD", cook, object);
+		}
+	} else
+			player.getPackets().sendGameMessage(
+					"Nothing interesting happens.");
+		System.out.println("Item on object: " + object.getId());
+		System.out.println("worked?.");
+	}
+	
+	
+	public static void handleItemOption6(Player player, int slotId, int itemId,
+			Item item) {
+		long time = Utils.currentTimeMillis();
+		if (player.getLockDelay() >= time
+				|| player.getEmotesManager().getNextEmoteEnd() >= time)
+			return;
+		player.stopAll(false);
+		Pouches pouches = Pouches.forId(itemId);
+		if (pouches != null)
+			Summoning.spawnFamiliar(player, pouches);
+		/*else if (itemId == 1438)
+			Runecrafting.locate(player, 3127, 3405);
+		else if (itemId == 1440)
+			Runecrafting.locate(player, 3306, 3474);
+		else if (itemId == 1442)
+			Runecrafting.locate(player, 3313, 3255);
+		else if (itemId == 1444)
+			Runecrafting.locate(player, 3185, 3165);
+		else if (itemId == 1446)
+			Runecrafting.locate(player, 3053, 3445);
+		else if (itemId == 1448)
+			Runecrafting.locate(player, 2982, 3514);*/
+		else if (itemId <= 1712 && itemId >= 1706 || itemId >= 10354
+				&& itemId <= 10362)
+			player.getDialogueManager().startDialogue("Transportation",
+					"Edgeville", new WorldTile(3087, 3496, 0), "Karamja",
+					new WorldTile(2918, 3176, 0), "Draynor Village",
+					new WorldTile(3105, 3251, 0), "Al Kharid",
+					new WorldTile(3293, 3163, 0), itemId);
+		else if (itemId == 1704 || itemId == 10352)
+			player.getPackets()
+					.sendGameMessage(
+							"The amulet has ran out of charges. You need to recharge it if you wish it use it once more.");
+		else if (itemId >= 3853 && itemId <= 3867)
+			player.getDialogueManager().startDialogue("Transportation",
+					"Burthrope Games Room", new WorldTile(2880, 3559, 0),
+					"Barbarian Outpost", new WorldTile(2519, 3571, 0),
+					"Gamers' Grotto", new WorldTile(2970, 9679, 0),
+					"Corporeal Beast", new WorldTile(2886, 4377, 0), itemId);
+	}
+	public static void itemOperate(final Player player, InputStream stream) {
+		//try {
+			int interfaceSet = stream.readInt();
+			int slotId = stream.readShort();
+			int interfaceId = interfaceSet >> 16;
+			int itemId = stream.readShortLE128();
+		//	int itemId = id;
+			if (interfaceId == 387) {
+				if (slotId < 0 || slotId >= Equipment.SIZE || player.getEquipment().getItems().get(slotId) == null) {
+					return;
+				}
+				if (player.getEquipment().getItems().get(slotId).getId() != itemId) {
+					return;
+				}
+				Item item = player.getInventory().getItem(itemId);
+				if(item == null || item.getId() != itemId)
+					return;
+				Pouches pouches = Pouches.forId(itemId);
+				if (pouches != null){
+					Summoning.spawnFamiliar(player, pouches);
+				}else if (itemId <= 1712 && itemId >= 1706 || itemId >= 10354
+						&& itemId <= 10362){
+					player.getDialogueManager().startDialogue("Transportation",
+							"Edgeville", new WorldTile(3087, 3496, 0), "Karamja",
+							new WorldTile(2918, 3176, 0), "Draynor Village",
+							new WorldTile(3105, 3251, 0), "Al Kharid",
+							new WorldTile(3293, 3163, 0), itemId);
+				}else if (itemId == 1704 || itemId == 10352){
+					player.getPackets()
+							.sendGameMessage(
+									"The amulet has ran out of charges. You need to recharge it if you wish it use it once more.");
+				}else if (itemId >= 3853 && itemId <= 3867){
+					player.getDialogueManager().startDialogue("Transportation",
+							"Burthrope Games Room", new WorldTile(2880, 3559, 0),
+							"Barbarian Outpost", new WorldTile(2519, 3571, 0),
+							"Gamers' Grotto", new WorldTile(2970, 9679, 0),
+							"Corporeal Beast", new WorldTile(2886, 4377, 0), itemId);
+				}
+			} else
+				player.getPackets().sendGameMessage("Nothing interesting happens.");
+	}
+
+private static boolean UseWith(int Item1, int Item2,int itemUsed,int usedWith) {
+if(itemUsed == Item1 && usedWith == Item2 || itemUsed == Item2 && usedWith == Item1) {
+return true;
+}
+return false;
+}
+/*
+ * returns the other
+ */
+public static Item contains(int id1, Item item1, Item item2) {
+	if (item1.getId() == id1)
+		return item2;
+	if (item2.getId() == id1)
+		return item1;
+	return null;
+}
+
+public static boolean contains(int id1, int id2, Item... items) {
+	boolean containsId1 = false;
+	boolean containsId2 = false;
+	for (Item item : items) {
+		if (item.getId() == id1)
+			containsId1 = true;
+		else if (item.getId() == id2)
+			containsId2 = true;
+	}
+	return containsId1 && containsId2;
+}
+public static void dig(final Player player) {
+	player.resetWalkSteps();
+	player.setNextAnimation(new Animation(830));
+	player.lock();
+	WorldTasksManager.schedule(new WorldTask() {
+
+		@Override
+		public void run() {
+			player.unlock();
+			if (Barrows.digIntoGrave(player))
+				return;
+			if(player.getX() == 3005 && player.getY() == 3376
+					|| player.getX() == 2999 && player.getY() == 3375
+					|| player.getX() == 2996 && player.getY() == 3377
+					|| player.getX() == 2989 && player.getY() == 3378
+					|| player.getX() == 2987 && player.getY() == 3387
+					|| player.getX() == 2984 && player.getY() == 3387) {
+				//mole
+				player.setNextWorldTile(new WorldTile(1752, 5137, 0));
+				player.getPackets().sendGameMessage("You seem to have dropped down into a network of mole tunnels.");
+				return;
+			}
+			player.getPackets().sendGameMessage("You find nothing.");
+		}
+		
+	});
+}
+
+}

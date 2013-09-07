@@ -1,0 +1,111 @@
+//strongHold of safety
+else if (id == 29603)
+
+player.setNextWorldTile(new WorldTile(3082, 4229, 0));
+
+
+
+else if (id == 29602)
+
+player.setNextWorldTile(new WorldTile(3074, 3456, 0));
+
+
+
+else if (id == 29589)
+
+player.setNextWorldTile(new WorldTile(3083, 3452, 0));
+
+
+
+else if (id == 29592)
+
+player.setNextWorldTile(new WorldTile(3086, 4247, 0));
+
+
+
+else if (id == 29623)
+
+player.setNextWorldTile(new WorldTile(3080, 4235, 0));
+
+
+//		if (player.getX() != 2483 || player.getY() != 3420
+				|| player.getPlane() != 2)
+else if (id == 29624) //go and back
+if (player.getX() = 3177 || player.getY() = 4269 || player.getPlane() = 2) {
+player.setNextWorldTile(new WorldTile(3177, 4266, 0));
+ else if (player.getX() = 3177 || player.getY() = 4266 || player.getPlane() = 0) {
+player.setNextWorldTile(new WorldTile(3177, 4269, 2));
+ else if (player.getX() = 3143 || player.getY() = 4270 || player.getPlane() = 0) {
+player.setNextWorldTile(new WorldTile(3142, 4272, 1));
+ else if (player.getX() = 3142 || player.getY() = 4272 || player.getPlane() = 1) {
+player.setNextWorldTile(new WorldTile(3143, 4270, 0));
+`
+
+else if (id == 29660)
+
+player.setNextWorldTile(new WorldTile(3149, 4251, 2));
+
+
+
+else if (id == 29659)
+
+player.setNextWorldTile(new WorldTile(3146, 4249, 1));
+
+
+else if (id == 29656)
+
+player.setNextWorldTile(new WorldTile(3149, 4244, 2));
+
+
+
+else if (id == 29655)
+
+player.setNextWorldTile(new WorldTile(3146, 4246, 1));
+
+
+else if (id == 29664)
+
+player.setNextWorldTile(new WorldTile(3157, 4244, 2));
+
+
+
+else if (id == 29663)
+
+player.setNextWorldTile(new WorldTile(3160, 4246, 1));
+
+
+else if (id == 29668)
+
+player.setNextWorldTile(new WorldTile(3157, 4251, 2));
+
+
+
+else if (id == 29667)
+
+player.setNextWorldTile(new WorldTile(3160, 4249, 1));
+
+
+
+else if (id == 29672)
+
+player.setNextWorldTile(new WorldTile(3171, 4271, 3));
+
+
+
+else if (id == 29671)
+
+player.setNextWorldTile(new WorldTile(3174, 4273, 2));
+
+
+
+else if (id == 29728)
+
+player.setNextWorldTile(new WorldTile(3159, 4279, 3));
+
+
+
+else if (id == 29729)
+
+player.setNextWorldTile(new WorldTile(3077, 3462, 0));
+
+

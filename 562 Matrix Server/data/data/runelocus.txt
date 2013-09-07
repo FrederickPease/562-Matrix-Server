@@ -1,0 +1,98 @@
+[SIZE=6][FONT=Arial Black]About me:[/FONT][/SIZE]
+Before i introduce my self, i was a member here before runelocus made an account reset in 2010, i made an acc on the first day runelocus was relaunched again. My old user name was "yourgirlwantsme", you can search it up. I was permanently banned for almost 2 and a half years. I did not have that much knowledge in java back than. Since these 2 and a half years passed i have been programming in java. Back than i used to call my myself a programmer but deep down inside i knew iam just a dependent "leecher" or whatever u call it. Now i am proud to say i am a programmer and deep down inside i know that i can do alot of stuff and take on challenges whatsoever. 
+
+
+[SIZE=6][FONT=Arial Black] Introductions:[/FONT][/SIZE]
+I chose the 562 revision because i wanted to challenge myself and make it better than most of the 562's that have been developed.
+
+
+[SIZE=6][FONT=Arial Black]About The Server:[/FONT][/SIZE]
+I started with a blank framework. It contained nothing but the framework. Btw I started working on this like 5 month ago than i took a long break and started working on this again.
+
+[SIZE=6][FONT=Arial Black] Updates:(not really up to date too lazy)[/FONT][/SIZE]
+[spoiler=Updates]
+-Login + rendering
+-NPC rendering 
+-Item support
+-Walking 
+-pathfinding
+-Npc spawns + movement
+-npc combat
+-player combat
+-range combat
+-melee combat
+-Mage combat 
+-Drops
+-Npc clipping
+-Player Clipping
+-bone burrying
+-Food eating
+-pots
+[/spoiler]
+
+[SIZE=6][FONT=Arial Black] Media:[/FONT][/SIZE]
+
+Watch this video this will prove how my 562 is compleletly different than all of the 562's.
+[spoiler=Pictures]
+[url]http://youtu.be/kQvcs8LBJ60[/url]
+[/spoiler]
+[spoiler= Pictures]
+[IMG]http://i.imgur.com/xFIw1.jpg[/IMG]
+
+(object anim packet is missing for now)
+[IMG]http://i.imgur.com/cf8oY.jpg[/IMG]
+
+door closed:
+[IMG]http://i.imgur.com/PseCF.jpg[/IMG]
+
+[IMG]http://i.imgur.com/aEkul.jpg[/IMG]
+fishing:
+[IMG]http://i.imgur.com/2KF4F.jpg[/IMG]
+
+[IMG]http://i.imgur.com/9lPCd.jpg[/IMG]
+[IMG]http://i.imgur.com/zqCjO.jpg[/IMG]
+[IMG]http://i.imgur.com/0vQq5.jpg[/IMG]
+projectiles are close to 100%
+[IMG]http://i.imgur.com/dYk5S.jpg[/IMG]
+[IMG]http://i.imgur.com/hQSh6.jpg[/IMG]
+[IMG]http://i.imgur.com/V4tk2.jpg[/IMG]
+[IMG]http://i.imgur.com/d9QcE.jpg[/IMG]
+my d bow specs:
+
+[IMG]http://i.imgur.com/h546r.jpg[/IMG]
+[IMG]http://i.imgur.com/gIBXK.jpg[/IMG]
+[IMG]http://i.imgur.com/VIFNL.jpg[/IMG]
+[IMG]http://i.imgur.com/rvmUs.jpg[/IMG]
+[IMG]http://i.imgur.com/3EEKv.jpg[/IMG]
+
+
+[/spoiler]
+[spoiler=Old Pictures]
+562 Login + rendering:
+[IMG]http://i.imgur.com/cOMZN.jpg[/IMG]
+
+Chat + npc support 
+[IMG]http://i.imgur.com/xgFUO.jpg[/IMG]
+
+item support
+[IMG]http://i.imgur.com/A39NF.jpg[/IMG]
+[IMG]http://i.imgur.com/Xrqn2.jpg[/IMG]
+[IMG]http://i.imgur.com/AQrOz.jpg[/IMG]
+[IMG]http://i.imgur.com/oUH8j.jpg[/IMG]
+[IMG]http://i.imgur.com/Fxa7e.jpg[/IMG]
+[IMG]http://i.imgur.com/7QHae.jpg[/IMG]
+[IMG]http://i.imgur.com/622MN.jpg[/IMG]
+[IMG]http://i.imgur.com/MqW1i.jpg[/IMG]
+[IMG]http://i.imgur.com/s1hoI.jpg[/IMG]
+[IMG]http://i.imgur.com/BYcr1.jpg[/IMG]
+[IMG]http://i.imgur.com/7oTLR.jpg[/IMG]
+[IMG]http://i.imgur.com/IIFug.jpg[/IMG]
+[IMG]http://i.imgur.com/Kn8hI.jpg[/IMG]
+[IMG]http://i.imgur.com/RI2s6.jpg[/IMG]
+[IMG]http://i.imgur.com/1d54H.jpg[/IMG]
+[IMG]http://i.imgur.com/aDPoG.jpg[/IMG]
+[IMG]http://i.imgur.com/725yS.jpg[/IMG]
+[IMG]http://i.imgur.com/aW3n5.jpg[/IMG]
+[IMG]http://i.imgur.com/26jwn.jpg[/IMG]
+[IMG]http://i.imgur.com/XsbGN.jpg[/IMG]
+[/spoiler]

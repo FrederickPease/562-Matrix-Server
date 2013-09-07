@@ -1,0 +1,14 @@
+@SuppressWarnings("unused")
+	private void itemOnItem(final Player player, final Packet packet) {
+		final int interfaceIndex = packet.readShort();
+		packet.readShort();
+		int fromSlot = packet.readShort();
+		int toSlot = packet.readShort();
+		int itemUsed = packet.readLEShortA() & 0xFFFF;
+		packet.readShort();
+		int toInterfaceIndex = packet.readLEShort();
+		int usedWith = packet.readLEShort() & 0xFFFF;
+		if (interfaceIndex != 149 && toInterfaceIndex != 149) {
+			return;
+		}
+}

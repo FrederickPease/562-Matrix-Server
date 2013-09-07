@@ -1,0 +1,27 @@
+tz-kih
+16089 attack animation
+16109 death animation
+16088 def animation
+
+tz-kek
+16163 attack anim
+16164 death anim
+16165 def anim
+
+tz-kek2
+16167 attack anim
+16168 death anim
+
+tok-xil
+16132 ranged anim
+16131 attack anim
+16110 death anim
+
+yt-mejkot
+16102 attack anim
+16103 death anim
+
+ket-zek
+16136 magic anim
+16134 attack anim
+16111 death anim

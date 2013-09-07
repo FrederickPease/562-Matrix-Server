@@ -1,0 +1,44 @@
+--
+-- Table structure for table `servers`
+--
+
+CREATE TABLE IF NOT EXISTS `servers` (
+`ip` text NOT NULL,
+`activity` text NOT NULL,
+`id` int(11) NOT NULL,
+`port` int(11) NOT NULL,
+`location` int(11) NOT NULL,
+`members` int(11) NOT NULL,
+`quickchat` int(11) NOT NULL,
+`pvp` int(11) NOT NULL,
+`lootshare` int(11) NOT NULL,
+`highlight` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `servers`
+--
+
+INSERT INTO `servers` (`ip`, `activity`, `id`, `port`, `location`, `members`, `quickchat`, `pvp`, `lootshare`, `highlight`) VALUES
+('gawdscape.servegame.com', 'General PvP', 1, 43594, 0, 0, 0, 0, 0, 0);
+
+
+--
+-- Table structure for table `servers`
+--
+
+CREATE TABLE IF NOT EXISTS `servers` (
+`server_ip` text NOT NULL,
+`server_name` text NOT NULL,
+`description` text NOT NULL,
+`server_port` int(11) NOT NULL,
+`id` int(11) NOT NULL,
+`status` text NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `servers`
+--
+
+INSERT INTO `servers` (`server_ip`, `server_name`,`description`,`server_port`, `id`,  `status`) VALUES
+('127.0.0.1', 'None', 'PvP', 43594, 1, 'true');

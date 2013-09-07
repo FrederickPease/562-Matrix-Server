@@ -1,0 +1,2 @@
+|| player.getX() == 3660 && player.getY() == 3515
+|| player.getX() == 3651 && player.getY() == 3527

@@ -1,0 +1,61 @@
+			case 6821:
+				return 2025;
+			case 6822:
+				return 2028;
+			case 6823:
+				return 2030;
+			case 6771:
+				return 2026;
+			case 6772:
+				return 2029;
+			case 6773:
+				return 2027;
+		}
+
+
+[QUOTE=Stacx;2324911][code]Friend list send message colour shit:
+287, 1 = light blue
+287, 2 = semi-light blue
+287, 3 = deep blue
+287, 4 = green
+287, 5 = light-green
+287, 6 = dark green
+287, 7 = light pink/skin colour
+287, 8 = orange
+287, 9 = deeper orange
+287, 10 = yellow
+287, 11 = red
+287, 12 = pink
+287, 13 = light-pink
+287, 14 = metal(blue/gray)
+287, 15 = black
+287, 16 = white
+287, 17 = grey
+287, 18 = Bit lighter than light blue[/code]
+
+[code]Sorting/magic configs:
+Sort by level order: 1376, 7680
+Sort by combat first: 1376, 7681
+Sort by teleports first: 1376, 7682[/code]
+
+Interface 880, the new summoning interface from 562 people couldn't figure out
+[code]
+1494, 1, - Special move
+1494, 2, - Attack
+1494, 3, - Call it
+1494, 4, - Dismiss
+1494, 5, - Take bob items
+1494, 6, - Renew familliar
+[/code]
+
+Notes:
+[code]colours:
+1440, 0 - white
+1440, 1 - green
+1440, 9 - orange
+1440, 57 - red[/code]
+
+Select a note:
+[code]1439, 0 (change this by note, ex. first note selected -> value 0, second -> value 1 and so on)[/code]
+
+[B]IF YOU HAVE REQUESTS, I AM WILLING TO GO DUMP THEM JUST POST BELOW.[/B][/QUOTE]

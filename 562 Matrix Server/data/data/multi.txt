@@ -1,0 +1,140 @@
+package com.rs.game.player.actions;
+
+import java.util.List;
+
+
+/*
+ * @author Humid
+ */
+
+import com.rs.game.Animation;
+import com.rs.game.Entity;
+import com.rs.game.World;
+import com.rs.game.npc.NPC;
+import com.rs.game.npc.familiar.Familiar;
+import com.rs.game.player.Player;
+import com.rs.utils.Utils;
+
+public class MultiTargetMagicHit {
+	private int Graphic;
+	private int Freeze_Time;
+
+	PlayerCombat pc;
+
+	public MultiTargetMagicHit(Player player, Entity target,int base_xp, int radius,
+			int maxHit, int anim, int sound, int castSound, int hitGFX,
+			int freeze, int freezeHitGFX, boolean blood, boolean teleblock) {
+		this.Graphic = hitGFX;
+		this.Freeze_Time = 0;
+
+		player.setNextAnimation(new Animation(anim));
+		if (castSound > 0) {
+			pc = new PlayerCombat(player);
+			pc.playSound(171, player, target);
+		}
+
+		long currentTime = Utils.currentTimeMillis();
+
+		if (player.isAtMultiArea() && target.isAtMultiArea()) {
+			Entity originalTarg = target;
+			for (int regionId : originalTarg.getMapRegionsIds()) {
+				List<Integer> playersIndexes = World.getRegion(regionId)
+						.getPlayerIndexes();
+
+				if (playersIndexes != null) {
+					for (int playerIndex : playersIndexes) {
+						Player victim = World.getPlayers().get(playerIndex);
+						
+						if (victim == null || !victim.hasStarted()
+								|| victim.isDead() || victim == player
+								|| victim.hasFinished()
+								|| !victim.withinDistance(originalTarg, radius)
+								|| !player.getControlerManager().canHit(victim))
+							continue;
+						
+						if ((victim.getCurrentFriendChat() != null && player.getCurrentFriendChat() != null) 
+								&& victim.getCurrentFriendChat().equals(player.getCurrentFriendChat()) && victim != target)
+							continue;
+								
+
+						if (victim.getSize() >= 2
+								|| victim.getFreezeDelay() >= currentTime
+								|| victim.getFrozenBlockedDelay() >= currentTime) {
+							Graphic = hitGFX;
+						} else {
+							Graphic = freezeHitGFX;
+							Freeze_Time = freeze;
+						}
+
+					
+							pc.delayMageHit(2,base_xp, victim, Graphic, sound,
+									Freeze_Time, blood, teleblock, pc
+											.getMagicHit(player, pc
+													.getRandomMagicMaxHit(
+															player, maxHit)));
+						
+					}
+
+				}
+
+				List<Integer> npcsIndexes = World.getRegion(regionId)
+						.getNPCsIndexes();
+
+				if (npcsIndexes != null) {
+					for (int npcIndex : npcsIndexes) {
+						NPC npc = World.getNPCs().get(npcIndex);
+						if (npc == null
+								|| npc.isDead()
+								|| npc.hasFinished()
+								|| (npc.isFamiliar() && ((Familiar) npc)
+										.getOwner() == player)
+								|| !npc.withinDistance(originalTarg, radius)
+								|| !npc.getDefinitions().hasAttackOption()
+								|| !player.getControlerManager().canHit(npc))
+							continue;
+						if (npc instanceof Familiar) {	
+							Familiar fam = ((Familiar)npc);
+							Player p2 = fam.getOwner();
+						if ((p2.getCurrentFriendChat() != null && player.getCurrentFriendChat() != null) 
+								&& p2.getCurrentFriendChat().equals(player.getCurrentFriendChat()) && fam != target)
+							continue;
+						}
+
+						if (npc.getSize() >= 2
+								|| npc.getFreezeDelay() >= currentTime
+								|| npc.getFrozenBlockedDelay() >= currentTime) {
+							Graphic = hitGFX;
+						} else {
+							Graphic = freezeHitGFX;
+							Freeze_Time = freeze;
+						}
+						
+					
+							pc.delayMageHit(2,base_xp, npc, Graphic, sound,
+									Freeze_Time, blood, teleblock, pc
+											.getMagicHit(player, pc
+													.getRandomMagicMaxHit(
+															player, maxHit)));
+						}
+					}
+			}
+		} else {
+			if (target.getSize() >= 2 || target.getFreezeDelay() >= currentTime
+					|| target.getFrozenBlockedDelay() >= currentTime) {
+				Graphic = hitGFX;
+			} else {
+				Graphic = freezeHitGFX;
+				Freeze_Time = freeze;
+			}
+
+			
+				pc.delayMageHit(2,base_xp, target, Graphic, sound,
+						Freeze_Time, blood, teleblock, pc
+								.getMagicHit(player, pc
+										.getRandomMagicMaxHit(
+												player, maxHit)));			
+
+		}
+
+	}
+}

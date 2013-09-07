@@ -1,0 +1,253 @@
+   public final int ROCK_INFO[][] = { //Rock, Ore, Level, Exp, Rock Delay (esT)
+        {2090, 436, 1, 17, 1}, //Copper
+        {2094, 438, 1, 17, 1}, //Tin
+        {2092, 440, 15, 35, 3}, //Iron
+        {2100, 442, 20, 40, 7}, //Silver
+        {2096, 444, 40, 65, 10}, //Gold
+        {2098, 447, 55, 80, 10}, //Mithril
+        {2102, 449, 70, 95, 13}, //Adamant
+        {2104, 451, 85, 125, 15} //Runite
+    };
+
+Copper Rocks, 2090
+Tin Rocks, 2094
+Iron Rocks, 2092
+Coal Rocks, 2096
+Mithril Rocks, 2103
+Adamantite Rocks, 2104
+Runite Rocks, 2106
+Furenace. 2781
+
+		//Copper(new int[]{31080, 31081, 31082, 2090, 2091, 9708}, 1, 175, 436, 2, 4),
+		//Tin(new int[]{31077, 31078, 2094, 2095, 9714}, 1, 175, 438, 2, 4),
+		//Iron(new int[]{31071, 31072, 31073, 2093, 2092, 9717}, 15, 350, 440, 2, 5),
+		//Coal(new int[]{31068, 31069, 31070, 2096, 2097, 14850, 452, 450}, 30, 500, 453, 3, 7),
+		//Gold(new int[]{31065, 31066, 9720, 2098, 2099}, 40, 650, 444, 3, 10),
+		//Mithril(new int[]{31086, 31088, 2103, 2102, 14853}, 50, 800, 447, 4, 11),
+		//Adamantite(new int[]{31083, 31085, 14862, 2104, 2105}, 70, 950, 449, 4, 13),
+		//Runite(new int[]{14859, 4860, 2106, 2107}, 85, 1250, 451, 5, 15);
+
+	    case 450: // Rock with no ore
+	    case 451: // Rock with no ore
+	    case 14832: // Rock with no ore
+	    case 14833: // Rock with no ore
+	    case 14834: // Rock with no ore
+	    case 14892: // Rock with no ore
+	    case 14893: // Rock with no ore
+	    case 14894: // Rock with no ore
+	    case 14895: // Rock with no ore
+	    case 14896: // Rock with no ore
+	    case 14897: // Rock with no ore
+	    case 14898: // Rock with no ore
+	    case 14899: // Rock with no ore
+	    case 11552: // Rock with no ore
+	    case 11553: // Rock with no ore
+	    case 11554: // Rock with no ore
+	    case 11555: // Rock with no ore
+	    case 11556: // Rock with no ore
+	    case 11557: // Rock with no ore
+
+	    case 2108: // Clay rock
+	    case 2109: // Clay rock
+	    case 14904: // Clay rock [light]
+	    case 14905: // Clay rock [light]
+
+	    case 2491: // Rune/pure essence rock
+
+	    case 11960: // Copper rock
+	    case 11961: // Copper rock
+	    case 11962: // Copper rock
+	    case 11936: // Copper rock
+	    case 11937: // Copper rock
+	    case 11938: // Copper rock
+	    case 2090: // Copper rock
+	    case 2091: // Copper rock
+	    case 14906: // Copper rock [light]
+	    case 14907: // Copper rock [light]
+	    case 14856: // Copper rock [new style]
+	    case 14857: // Copper rock [new style]
+	    case 14858: // Copper rock [new style]
+
+	    case 11957: // Tin rock
+	    case 11958: // Tin rock
+	    case 11959: // Tin rock
+	    case 11933: // Tin rock
+	    case 11934: // Tin rock
+	    case 11935: // Tin rock
+	    case 2094: // Tin rock
+	    case 2095: // Tin rock
+	    case 14902: // Tin rock [light]
+	    case 14903: // Tin rock [light]
+
+	    case 11954: // Iron rock
+	    case 11955: // Iron rock
+	    case 11956: // Iron rock
+	    case 2092: // Iron rock
+	    case 2093: // Iron rock
+	    case 14900: // Iron rock [light]
+	    case 14901: // Iron rock [light]
+	    case 14913: // Iron rock [light]
+	    case 14914: // Iron rock [light]
+	    case 11948: // Silver rock
+	    case 11949: // Silver rock
+	    case 11950: // Silver rock
+	    case 2100: // Silver rock
+	    case 2101: // Silver rock
+
+	    case 11963: // Coal rock
+	    case 11964: // Coal rock
+	    case 11965: // Coal rock
+	    case 11930: // Coal rock
+	    case 11931: // Coal rock
+	    case 11932: // Coal rock
+	    case 2096: // Coal rock
+	    case 2097: // Coal rock
+	    case 14850: // Coal rock [new style]
+	    case 14851: // Coal rock [new style]
+	    case 14852: // Coal rock [new style]
+
+	    case 11951: // Gold rock
+	    case 11952: // Gold rock
+	    case 11953: // Gold rock
+	    case 2098: // Gold rock
+	    case 2099: // Gold rock
+
+	    case 11945: // Mithril rock
+	    case 11946: // Mithril rock
+	    case 11947: // Mithril rock
+	    case 11942: // Mithril rock
+	    case 11943: // Mithril rock
+	    case 11944: // Mithril rock
+	    case 2102: // Mithril rock
+	    case 2103: // Mithril rock
+	    case 14853: // Mithril rock [new style]
+	    case 14854: // Mithril rock [new style]
+	    case 14855: // Mithril rock [new style]
+
+	    case 11939: // Adamantite rock
+	    case 11940: // Adamantite rock
+	    case 11941: // Adamantite rock
+	    case 2104: // Adamantite rock
+	    case 2105: // Adamantite rock
+	    case 14862: // Adamantite rock [new style]
+	    case 14863: // Adamantite rock [new style]
+	    case 14864: // Adamantite rock [new style]
+
+	    case 2106: // Runite rock
+	    case 2107: // Runite rock
+	    case 14859: // Runite rock [new style]
+	    case 14860: // Runite rock [new style]
+	    case 14861: // Runite rock [new style]
+
+
+{2091},	//copper
+{2090},	//copper
+{11936},	//copper 508
+{2094},	//tin
+{2095},	//tin
+{11933},	//tin 508
+{2093},	//iron
+{2092},	//iron
+{2092},	//iron 508
+{2097},	//coal
+{2096},	//coal
+{11930},	//coal 508
+{2098},	//gold
+{2099},	//gold
+{2103},	//mith
+{2102},	//mith
+{11942},	//mith 508
+{2104},	//addy
+{2105},	//addy
+{11941},	//addy 508
+{2100},	//silver
+{2101},	//silver
+{14859},//rune
+{14860},//rune
+
+
+
+
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+					else if (id == 1//coal rocks
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1
+							|| id == 1)
+						player.getActionManager().setAction(
+								new Mining(object, RockDefinitions.Coal_Ore));
+
+
+
+
+
+
+
+
+						case "tin ore rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Tin_Ore));
+							break;
+						case "gold ore rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Gold_Ore));
+							break;
+						case "iron ore rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Iron_Ore));
+							break;
+						case "silver ore rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Silver_Ore));
+							break;
+						case "coal rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Coal_Ore));
+							break;
+						case "clay rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Clay_Ore));
+							break;
+						case "copper ore rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Copper_Ore));
+							break;
+						case "adamantite ore rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Adamant_Ore));
+							break;
+						case "runite ore rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Runite_Ore));
+							break;
+						case "granite rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Granite_Ore));
+							break;
+						case "sandstone rocks":
+							player.getActionManager().setAction(
+									new Mining(object, RockDefinitions.Sandstone_Ore));
+							break;
+						case "mithril ore rocks":
+							player.getActionManager().setAction(new Mining(object, RockDefinitions.Mithril_Ore));
+							break;
+

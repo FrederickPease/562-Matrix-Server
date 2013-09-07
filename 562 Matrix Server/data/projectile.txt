@@ -1,0 +1,69 @@
+	public void sendProjectile(int x, int y, Entity from, Entity to, int gfxId,
+			int startHeight, int endHeight, int speed, int distance,
+			int speed1, int speed2) {
+		if (player.getLocation().getStaticLocation() != 1) {
+			OutStream out = new OutStream();
+			out.writePacketVarShort(11);
+			int localX = x
+					- (player.getMask().getRegion().getLastMapRegion().getRegionX() - 6)
+					* 8;
+			int localY = y
+					- (player.getMask().getRegion().getLastMapRegion().getRegionY() - 6)
+					* 8;
+			out.writeByte128(localX >> 3);
+			out.writeByte(from.getLocation().getZ());
+			out.writeByte128(localY >> 3);
+			out.writeByte(6); // subpacket
+			out.writeByte((0x80 & 0) | (0x7 & (localY - ((localY >> 3) << 3)))
+					| (((localX - ((localX >> 3) << 3)) << 3)));
+			out.writeByte((x - from.getLocation().getX())
+					* -1);
+			out.writeByte((y - from.getLocation().getY())
+					* -1);
+			out.writeShort(to == null ? -1
+					: (to instanceof Player ? -to.getIndex() - 1 : to
+							.getClientIndex() + 1)); // target index
+			out.writeShort(gfxId); // gfx moving
+			out.writeByte(startHeight); // startHeight
+			out.writeByte(endHeight); // endHeight
+			out.writeShort(speed); // speed, arrow 41, spell 56
+			out.writeShort(distance); // speed 51 normaly
+			out.writeByte(speed1); // speed, arrow 15
+			out.writeShort(speed2);
+			out.endPacketVarShort();
+			// projectile
+			player.getConnection().write(out);
+		} else {
+			OutStream out = new OutStream();
+			out.writePacketVarShort(11);
+			int localX = x
+					- (player.getMask().getRegion().getLastMapRegion2().getRegionX() - 6)
+					* 8;
+			int localY = y
+					- (player.getMask().getRegion().getLastMapRegion2().getRegionY() - 6)
+					* 8;
+			out.writeByte128(localX >> 3);
+			out.writeByte(from.getLocation().getZ());
+			out.writeByte128(localY >> 3);
+			out.writeByte(6); // subpacket
+			out.writeByte((0x80 & 0) | (0x7 & (localY - ((localY >> 3) << 3)))
+					| (((localX - ((localX >> 3) << 3)) << 3)));
+			out.writeByte((x - from.getLocation().getX())
+					* -1);
+			out.writeByte((y - from.getLocation().getY())
+					* -1);
+			out.writeShort(to == null ? -1
+					: (to instanceof Player ? -to.getIndex() - 1 : to
+							.getClientIndex() + 1)); // target index
+			out.writeShort(gfxId); // gfx moving
+			out.writeByte(startHeight); // startHeight
+			out.writeByte(endHeight); // endHeight
+			out.writeShort(speed); // speed, arrow 41, spell 56
+			out.writeShort(distance); // speed 51 normaly
+			out.writeByte(speed1); // speed, arrow 15
+			out.writeShort(speed2);
+			out.endPacketVarShort();
+			// projectile
+			player.getConnection().write(out);
+		}
+	}
