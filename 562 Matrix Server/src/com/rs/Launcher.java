@@ -45,30 +45,6 @@ import com.rs.utils.huffman.Huffman;
 public final class Launcher {
 	
 	public static GUI guiPanel;
-	/**This is to test if the thing saves
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * @param args
-	 * @throws Exception
-	 */
 	
 	public static final void main(String[] args) throws Exception {
 		long currentTime = System.currentTimeMillis();
